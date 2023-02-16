@@ -1,0 +1,17 @@
+
+{
+    "Information" : [
+        "This file provides default values for the deployment wizard inside Visual Studio and the AWS Lambda commands added to the .NET Core CLI.",
+        "To learn more about the Lambda commands with the .NET Core CLI execute the following command at the command line in the project root directory.",
+        "dotnet lambda help",
+        "All the command line options for the Lambda command can be specified in this file."
+    ],
+    "profile"     : "default",
+    "region"      : "ap-southeast-2",
+    "configuration" : "Release",
+    "s3-prefix"     : "Hybrid.Mock/",
+    "template"      : "serverless.yaml",
+    "template-parameters" : "\"Avenue\"=\"develop\";\"ParameterDecryptionKeyID\"=\"072e2d69-bfd3-415f-afc1-b99abda49537\";\"BucketName\"=\"rapid-api-tracer-assets\";\"UpstreamAvenue\"=\"master\";\"ServiceName\"=\"rapid-api-tracer\";\"SentryDsn\"=\"https://793b9db408be4501906eefb281f1bae4@o125488.ingest.sentry.io/6574583\";\"ReleaseInfo\"=\"Release-63@Build-20220809.5\";\"AwsAccount\"=\"TEST\";\"DeploymentPreference\"=\"AllAtOnce\";\"UseCustomDNS\"=\"true\";\"InternalAuthParamStorePath\"=\"gpinternalauth/master\";\"UserPoolId\"=\"ap-southeast-2_2n4Glup5Y\"",
+    "s3-bucket"           : "eway-test-lambda-deployments",
+    "stack-name"          : "TEST-SAM-DEVELOP-RAPID-API-TRACER"
+}

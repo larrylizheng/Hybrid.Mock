@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hybrid.Mock", "Hybrid.Mock\Hybrid.Mock.csproj", "{35D488A8-938E-4E14-9930-0C283316B786}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC5DF892-8BB7-40C6-98D4-4C1DC82FAD01}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hybrid.Mock.Core", "Hybrid.Mock.Core\Hybrid.Mock.Core.csproj", "{607EF89B-6930-4A57-B968-C3E2EA1AF299}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35D488A8-938E-4E14-9930-0C283316B786}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35D488A8-938E-4E14-9930-0C283316B786}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35D488A8-938E-4E14-9930-0C283316B786}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35D488A8-938E-4E14-9930-0C283316B786}.Release|Any CPU.Build.0 = Release|Any CPU
+		{607EF89B-6930-4A57-B968-C3E2EA1AF299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{607EF89B-6930-4A57-B968-C3E2EA1AF299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{607EF89B-6930-4A57-B968-C3E2EA1AF299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{607EF89B-6930-4A57-B968-C3E2EA1AF299}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB8A6809-9B77-4F27-9B8E-4F67AED11FD3}
+	EndGlobalSection
+EndGlobal

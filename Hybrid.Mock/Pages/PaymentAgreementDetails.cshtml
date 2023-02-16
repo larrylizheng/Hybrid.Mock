@@ -1,0 +1,303 @@
+﻿@page "{Id}/{CustomerId}/{CorrelationID}"
+@model Hybrid.Mock.Pages.PaymentAgreementDetailsModel
+@{
+    ViewData["Title"] = "Payment Agreement Details";
+}
+@using Hybrid.Mock.Core.Utilities;
+<h2>Details of @RouteData.Values["CorrelationID"]</h2>
+<hr />
+
+<script>
+    // sets the html content to the beautified json result
+    // specifically the where the id tag is located in the HTML markup
+    function prettyPrint(id, data) {
+        document.getElementById(id).innerHTML = prettyPrintJson.toHtml(data);
+    }
+
+    function populateTable(id, cloudWatchObj) {
+        const tagCondition = id + "-condition"
+
+        const table = document.getElementById(id);
+
+        let row = table.insertRow();
+
+        let timestamp = row.insertCell(0);
+        timestamp.innerHTML = cloudWatchObj.timeStamp;
+
+        let service = row.insertCell(1);
+        service.innerHTML = cloudWatchObj.cloudWatchLogGroup;
+
+        let message = row.insertCell(2);
+        message.innerHTML = cloudWatchObj.cloudWatchLogContent;
+    }
+
+    var cloudWatchLogsInput;
+    var cloudWatchLogsResult;
+    var cloudWatchsLogsKeys;
+    var lambdaLogsKeys;
+    var cloudWatchObj;
+
+    function buildLambdaLogsObject(response) {
+        cloudWatchLogsResult = response;
+        cloudWatchsLogsKeys = Object.keys(cloudWatchLogsResult);
+
+        for (let x = 0; x < cloudWatchsLogsKeys.length; x++) {
+            key = cloudWatchsLogsKeys[x];
+            console.log(key)
+
+            for (let y = 0; y < cloudWatchLogsResult[key].length; y++) {
+                cloudWatchObj = cloudWatchLogsResult[key][y];
+                console.log(cloudWatchObj);
+
+                switch(key) {
+                    case "Rapid.API.PaymentAgreement":
+                        populateTable("RapidApiPaymentAgreement-table", cloudWatchObj);
+                        showTable("RapidApiPaymentAgreement-table");
+                        
+                        break;
+                    case "Rapid.API.PaymentAgreement.Azupay.Api":
+                        populateTable("RapidApiPaymentAgreementAzupay-table", cloudWatchObj);
+                        showTable("RapidApiPaymentAgreementAzupay-table");
+
+                        break;
+                    case "Rapid.API.PaymentAgreement.Webhook":
+                        populateTable("RapidApiPaymentAgreementWebhook-table", cloudWatchObj);
+                        showTable("RapidApiPaymentAgreementWebhook-table");
+
+                        break;
+
+                    default:
+                        console.log(`Lambda Logs could not be produced for ${key}.`);
+                }
+            }
+        }
+     }
+
+    function getCloudWatchLogs(correlationId, transactionDate) {
+        cloudWatchLogsInput = {
+            CorrelationID: correlationId,
+            TransactionDate: transactionDate
+        }
+
+        $(document).ready(function () {
+            $.ajax({
+                url: '/CloudWatch/GetPayToCloudWatchLogs',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: JSON.stringify(cloudWatchLogsInput),
+                contentType: 'application/json',
+                success: buildLambdaLogsObject,
+            error: function(err) {
+                alert(err.status + " : " + err.statusText);
+            }
+        });
+     });
+    }
+
+    function hideTable(tableName) {
+        var x = document.getElementById(tableName);
+        x.style.visibility = "hidden";
+    }
+
+    function showTable(tableName) {
+        var x = document.getElementById(tableName);
+        x.style.visibility = "visible";
+    }
+
+</script>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <td colspan="100%" class="bold-label">Payment Agreement Summary</td>
+            </tr>
+            <tr>
+                <td colspan="100%" class="bold-label"><pre id="transactionsummary"><script>prettyPrint("transactionsummary", JSON.parse(@Json.Serialize(Model.PaymentAgreementDetails)));</script></pre></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    var correlationId = "@Model.CorrelationID";
+    var transactionDate = "@Model.AgreementDate";
+    getCloudWatchLogs(correlationId, transactionDate);
+</script>
+@if (Model.PaymentAgreementTabView != null)
+{
+    <div class="row">
+        <ul class="nav nav-tabs">
+            @for (var j = 0; j < Model.PaymentAgreementTabView.PaymentAgreementTabs.Count; j++)
+            {
+                var tabView = Model.PaymentAgreementTabView.PaymentAgreementTabs.OrderBy(x => x.Value.FirstOrDefault().FileCreatedDate).ElementAt(j);
+
+                var summaryTabId = "Summary" + j.ToString();
+
+                @if (tabView.Value.Count > 1)
+                {
+                    if (j == 0)
+                    {
+                        <li class="nav-item active">
+                            <a class="nav-link @(j == 0 ? "active" : "")" href="#@summaryTabId" data-toggle="tab">@tabView.Key</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(j == 0 ? "active" : "")" href="#@summaryTabId" data-toggle="tab">@tabView.Key</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="nav-item active">
+                        <a class="nav-link @(j == 0 ? "active" : "")" href="#@tabView.Value.ElementAt(0).SubTabId" data-toggle="tab">@tabView.Key</a>
+                    </li>
+                }
+            }
+        </ul>
+
+        <div class="tab-content">
+            @for (var j = 0; j < Model.PaymentAgreementTabView.PaymentAgreementTabs.Count; j++)
+            {
+                var tabView = Model.PaymentAgreementTabView.PaymentAgreementTabs.OrderBy(x => x.Value.FirstOrDefault().FileCreatedDate).ElementAt(j);
+
+                var summaryTabId = "Summary" + j.ToString();
+
+                @if (tabView.Value.Count > 1)
+                {
+                    <div id="@summaryTabId" class="tab-pane fade @(j == 0 ? "in active" : "")">
+                        @for (var n = 0; n < @tabView.Value.Count; n = n + 2)
+                        {
+                            string requestSubTabId = (@tabView.Value.ElementAt(n).SubTabId).ToString() + "-requestSubTabId-" + j.ToString();
+                            string responseSubTabId = (@tabView.Value.ElementAt(n).FileName).ToString() + "-responseSubTabId-"  + j.ToString();
+
+                            @if (n + 1 >= @tabView.Value.Count)
+                            {
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <P><strong>@tabView.Value.ElementAt(n).TabContentHeader</strong></P>
+
+                                        <pre class="prettyprint" id="@requestSubTabId">
+                                        <script>prettyPrint("@requestSubTabId", JSON.parse(@Json.Serialize(@tabView.Value.ElementAt(n).FileContent)));</script></pre>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <P></P>
+                                        <pre class="prettyprint"></pre>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <br/>
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        @if(@tabView.Value.ElementAt(n).TabContentHeader.Contains("Pay Out Request"))
+                                        {
+                                            <P><strong>Request</strong></P>
+                                        }
+                                        else
+                                        {
+                                            <P><strong>@tabView.Value.ElementAt(n).TabContentHeader</strong></P>
+                                        }   
+
+                                        <pre class="prettyprint" id="@requestSubTabId">
+                                        <script>prettyPrint("@requestSubTabId", JSON.parse(@Json.Serialize(@tabView.Value.ElementAt(n).FileContent)));</script>
+                                    </pre>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        @if(@tabView.Value.ElementAt(n+1).TabContentHeader.Contains("Pay Out Response"))
+                                        {
+                                            <P><strong>Response</strong></P>
+                                        }
+                                        else
+                                        {
+                                            <P><strong>@tabView.Value.ElementAt(n+1).TabContentHeader</strong></P>
+                                        }
+
+                                        <pre class="prettyprint" id="@responseSubTabId">
+                                        <script>prettyPrint("@responseSubTabId", JSON.parse(@Json.Serialize(@tabView.Value.ElementAt(n+1).FileContent)));</script>
+                                    </pre>
+                                    </div>
+                                </div>
+                            }
+
+                            string lambdaTableId = tabView.Value.ElementAt(n).SubTabId.Split("_Request").First() + "-table";
+
+                            <br/>
+
+                            @if (lambdaTableId != "hydra-azupay-table")
+                            {
+                                
+                                <div class="row">
+                                <div class="col-md-12">
+
+                                    <table id="@lambdaTableId" class="table table-striped table-bordered" style="width: 100%; word-wrap:break-word;table-layout: fixed;">
+                                        <thead>
+                                            <tr>
+                                                <td style="width:45px;">Timestamp</td>
+                                                <td style="width:45px;">Service</td>
+                                                <td style="width:210px;">Message</td>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody></tbody>
+                                     </table>
+                                 </div>
+                                 <script>hideTable("@lambdaTableId");</script>
+                            </div>
+                            }
+                                
+                            
+                        }
+                    </div>
+                }
+                else
+                {
+                    string requestAtFirstElement = (@tabView.Value.ElementAt(0).SubTabId).ToString() + "-requestAtFirstElement" + j.ToString();
+                    string responseAtFirstElement = (@tabView.Value.ElementAt(0).FileName).ToString() + "-fileNameAtFirstElement" + j.ToString();
+
+                    string lambdaTableId = tabView.Value.ElementAt(0).SubTabId.Split("_Request").First() + "-table";
+
+
+                    <div id="@tabView.Value.ElementAt(0).SubTabId" class="tab-pane fade @(j == 0 ? "in active" : "")">
+                        <div class="row">
+                            <div class="col-md-11 prettyprint">
+                                <P><strong>@tabView.Value.ElementAt(0).TabContentHeader</strong></P>
+
+                                <pre class="prettyprint" id="@requestAtFirstElement">
+                                <script>prettyPrint("@requestAtFirstElement", JSON.parse(@Json.Serialize(@tabView.Value.ElementAt(0).FileContent)));</script>
+                            </pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    
+
+                                    <table id="@lambdaTableId" class="table table-striped table-bordered" style="border-collapse:collapse; table-layout:fixed; width:100%;">
+                                        <thead>
+                                            <tr>
+                                                <td style="width:45px;">Timestamp</td>
+                                                <td style="width:45px;">Service</td>
+                                                <td style="width:210px;">Message</td>
+                                            </tr>
+                                        </thead>
+                                        
+                                       
+                                        <tbody></tbody> 
+                                     </table>
+                                     <script>hideTable("@lambdaTableId");</script>
+                                 </div>
+                            </div>
+                }
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,181 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script>
+    function HideValidationSummary()
+    {
+        $(".validation-summary-errors").fadeOut();
+    }
+
+    function submitForm(){ 
+        document.getElementById('myform').submit(); 
+    }
+
+    $(document).ready(function () {
+        $('#SearchConditions_CustomerId').focus();
+        $('#SearchConditions_Reference').focus();
+        $('#SearchConditions_TransactionId').focus();
+        $('#SearchConditions_TransactionId').keyup(function () { HideValidationSummary(); });
+        $('#SearchConditions_CustomerId').keyup(function () { HideValidationSummary(); });
+        $('#SearchConditions_Reference').keyup(function () { HideValidationSummary(); });
+    });
+
+    $(document).ready(function() {
+        $('#mytransactiontypeselect').on('change', function() {
+            document.forms['mytransactiontypeform'].submit();
+        });
+    });
+
+    $(document).bind('keydown', function (e) {
+        if (e.which === 13) { // return
+            $(".btn-success").trigger('click');
+        }
+    });
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <table width="100%">
+            <tr>
+                <td style="padding-top: 30px">
+                    <div>
+                        <form asp-page-handler="TransactionTypeChange" id="mytransactiontypeform" method="post">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    <select class="form-control" style="margin-left: 50px;" id="mytransactiontypeselect" asp-for="@Model.SelectedTransactionInputItem">  
+                                        <optgroup label="PayOut">  
+                                            <option value="0">Transaction</option>  
+                                            <option value="1">Customer Reference</option>
+                                            <option value="2">Correlation</option>  
+                                        </optgroup>  
+                                        <optgroup label="PayTo">  
+                                            <option value="3">Resource</option>  
+                                            <option value="4">Customer Reference</option>
+                                            <option value="5">Correlation ID</option>
+                                        </optgroup>  
+                                    </select>  
+                                </div>
+                            </div>
+                        </form>
+
+                        @if (Model.SelectedTransactionInputItem != -1) {
+
+                            <form method="post" id="myform">
+                            <div margin-left: 50px;>
+                                
+                                @if (Model.SelectedTransactionInputItem == 0)
+                                {
+                                    <div class="col-md-6" style="margin-left: 50px;">
+                                        <input asp-for="TransactionSearchConditions.TransactionId" class="form-control"/>
+                                        <span asp-validation-for="TransactionSearchConditions.TransactionId" class="text-danger"></span>
+                                    </div>
+
+                                    <input type="hidden" value="Transaction Search" asp-for="SelectedSearchName"/>
+                                    <input type="hidden" value="Pay Out Search" asp-for="SelectedTransactionTypeName"/>
+                                }
+                                @if (Model.SelectedTransactionInputItem == 1)
+                                {
+                                    <div class="col-md-3" style="margin-left: 50px;">
+                                        <input asp-for="CustomerReferenceSearchConditions.CustomerId" class="form-control"/>
+                                        <span asp-validation-for="CustomerReferenceSearchConditions.CustomerId" style="margin-bottom: 25px;" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <input asp-for="CustomerReferenceSearchConditions.Reference" class="form-control"/>
+                                        <span asp-validation-for="CustomerReferenceSearchConditions.Reference" style="margin-bottom: 25px;" class="text-danger"></span>
+                                    </div>
+
+                                    <input type="hidden" value="CustomerReferenceIndex" asp-for="IndexName"/>
+                                    <input type="hidden" value="Customer Reference Search" asp-for="SelectedSearchName"/>
+                                    <input type="hidden" value="Pay Out Search" asp-for="SelectedTransactionTypeName"/>
+                                }
+                                @if (Model.SelectedTransactionInputItem == 2)
+                                {
+                                    <div class="col-md-6" style="margin-left: 50px;">
+                                        <input asp-for="CorrelationIDSearchConditions.CorrelationID" class="form-control"/>
+                                        <span asp-validation-for="CorrelationIDSearchConditions.CorrelationID" class="text-danger"></span>
+                                    </div>
+
+                                    <input type="hidden" value="CorrelationIndex" asp-for="IndexName"/>
+                                    <input type="hidden" value="Correlation ID Search" asp-for="SelectedSearchName"/>
+                                    <input type="hidden" value="Pay Out Search" asp-for="SelectedTransactionTypeName"/>
+                                }
+                                @if (Model.SelectedTransactionInputItem == 3)
+                                {
+                                    <div class="col-md-6" style="margin-left: 50px;">
+                                        <input asp-for="ResourceSearchConditions.ResourceId" class="form-control"/>
+                                        <span asp-validation-for="ResourceSearchConditions.ResourceId" class="text-danger"></span>
+                                    </div>
+
+                                    <input type="hidden" value="Resource Search" asp-for="SelectedSearchName"/>
+                                    <input type="hidden" value="Pay To Search" asp-for="SelectedTransactionTypeName"/>
+                                }
+                                @if (Model.SelectedTransactionInputItem == 4)
+                                {
+                                    <div class="col-md-3" style="margin-left: 50px;">
+                                        <input asp-for="CustomerReferenceSearchConditions.CustomerId" class="form-control"/>
+                                        <span asp-validation-for="CustomerReferenceSearchConditions.CustomerId" style="margin-bottom: 25px;" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <input asp-for="CustomerReferenceSearchConditions.Reference" class="form-control"/>
+                                        <span asp-validation-for="CustomerReferenceSearchConditions.Reference" style="margin-bottom: 25px;" class="text-danger"></span>
+                                    </div>
+
+                                    <input type="hidden" value="CustomerReferenceIndex" asp-for="IndexName"/>
+                                    <input type="hidden" value="Client Referencee Search" asp-for="SelectedSearchName"/>
+                                    <input type="hidden" value="Pay To Search" asp-for="SelectedTransactionTypeName"/>
+                                }
+                                @if (Model.SelectedTransactionInputItem == 5)
+                                {
+                                    <div class="col-md-6" style="margin-left: 50px;">
+                                        <input asp-for="CorrelationIDSearchConditions.CorrelationID" class="form-control"/>
+                                        <span asp-validation-for="CorrelationIDSearchConditions.CorrelationID" class="text-danger"></span>
+                                    </div>
+
+                                    <input type="hidden" value="CorrelationIndex" asp-for="IndexName"/>
+                                    <input type="hidden" value="Correlation ID Search" asp-for="SelectedSearchName"/>
+                                    <input type="hidden" value="Pay To Search" asp-for="SelectedTransactionTypeName"/>
+                                }
+                                <div class="col-md-2" style="margin-left: 25px;">
+                                        <button type="submit" asp-page-handler="Submit" class="btn btn-success" onClientClick="HideValidationSummary()">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                    
+                    <div style="margin-right: 10px;" asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </td>
+            </tr>
+            @if (Model.TransactionSearchItem != null)
+            {
+                <tr>
+                    <td><hr/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="table table-striped table-bordered" style="margin-left: 15px">
+                            <thead>
+                            <tr>
+                                <td>Correlation ID</td>
+                                <td>Customer ID</td>
+                                <td>Request Time</td>
+                                <td>Transaction ID</td>
+                            </tr>
+                            </thead>
+                            
+                            <tr>
+                                <td><a asp-page="TransactionDetails" asp-route-id="@Model.TransactionSearchItem.TransactionId" asp-route-customerId="@Model.TransactionSearchItem.CustomerId" asp-route-correlationId="@Model.TransactionSearchItem.CorrelationID">@Model.TransactionSearchItem.CorrelationID</a></td>
+                                <td>@Model.TransactionSearchItem.CustomerIdForView</td>
+                                <td>@Model.TransactionSearchItem.DateCreated</td>
+                                <td>@Model.TransactionSearchItem.TransactionIdForView</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
