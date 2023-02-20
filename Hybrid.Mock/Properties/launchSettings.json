@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://127.0.0.1:56236;http://127.0.0.1:56237"
+      "applicationUrl": "https://localhost:56236;http://localhost:56237"
     },
     "Mock Lambda Test Tool": {
       "commandName": "Executable",

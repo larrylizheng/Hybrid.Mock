@@ -63,16 +63,26 @@ public class Startup
         .AddOpenIdConnect(options =>
         {
             options.ResponseType = "code";
-            options.MetadataAddress = "https://cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_Syqjstc2f/.well-known/openid-configuration";
-            options.ClientId = "60j21dgkauefs41eudjpfigco7";
-            options.ClientSecret = "169rgmhb2ljnl0m11u8mtbfbkntbs8nhl2o91d78ts2015jaaf88";
+            options.MetadataAddress = "https://cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_ITcWjhj9k/.well-known/openid-configuration";
+            options.ClientId = "330ltbpnq6g8easfvkqpudct4j";
+            options.ClientSecret = "1osl7r4bla5kuacjbe0nmlptvclbm9gt1tbm9f3fhpl0e49b8l8i";
             options.SaveTokens = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                //ValidateIssuer = Convert.ToBoolean(Configuration["AWS:OpenId:TokenValidationParameters:ValidateIssuer"]),
                 ValidateIssuer = true,
                 NameClaimType = "name"
             };
+            //options.ResponseType = "code";
+            //options.MetadataAddress = "https://lyoidctest.azurewebsites.net/.well-known/openid-configuration";
+            //options.ClientId = "mockidp";
+            //options.ClientSecret = "901564A5-E7FE-42CB-B10D-61EF6A8F3654";
+            //options.SaveTokens = true;
+            //options.TokenValidationParameters = new TokenValidationParameters
+            //{
+            //    ValidateIssuer = true,
+            //    NameClaimType = "name"
+            //};
+
             //options.Events = new OpenIdConnectEvents()
             //{
             //    OnRedirectToIdentityProvider = context =>
@@ -131,8 +141,8 @@ public class Startup
             .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase)
             .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-        services.AddDataProtection()
-            .PersistKeysToAWSSystemsManager($"/{Constants.ApplicationName.ToLowerInvariant()}/DataProtection");
+        //services.AddDataProtection()
+        //    .PersistKeysToAWSSystemsManager($"/{Constants.ApplicationName.ToLowerInvariant()}/DataProtection");
         services.AddRazorPages()
             .AddRazorPagesOptions(options =>
             {
